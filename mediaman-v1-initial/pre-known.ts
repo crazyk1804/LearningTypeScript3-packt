@@ -109,7 +109,7 @@ class ClassWithDefaultGenericType<T = string> {
     constructor(public something: T){}
 }
 
-interface InterfaceWithSpecializedGenericType<T = Person & { arg: number }> {
+interface InterfaceWithSpecializedGenericType<T = Person & { age: number }> {
     doSomething(arg: T): T;
 }
 
@@ -127,6 +127,91 @@ class CLS implements InterfaceWithSpecializedGenericType<AgedPerson> {
     }
 }
 
-let ap: AgedPerson = new AgedPerson('mother', 'fucker');
+let ap: Person = new AgedPerson('mother', 'fucker');
 let cls = new CLS();
 console.log(cls.doSomething(ap));
+
+class A {
+    constructor(public firstName: string, public lastName: string) {}
+}
+
+type B = {
+    age: number
+}
+
+type C = A&B;
+
+let c:C = {
+    firstName: 'first', lastName: 'last', age: 10
+};
+
+// 맘에 안드는데 위에껀...
+
+
+
+
+abstract class Recipe {
+    constructor(public name: string, public ingredients: string[]) {
+
+    }
+}
+
+class ItalianRecipe extends Recipe {
+
+}
+
+class FrenchRecipe extends Recipe {
+    constructor(name: string, ingredients: string[], public chef: string) {
+        super(name, ingredients);
+    }
+}
+
+class BrittanyRecipe extends FrenchRecipe {
+
+}
+
+// generic constraint
+function displayRecipe<T extends FrenchRecipe>(recipe: T): void {
+    console.log(
+        `This is a french recipe coonceived by the following chef: ${ recipe.chef}`
+    );
+}
+
+const brittanyRecipe = new BrittanyRecipe(
+    'Crepe Bretonne',
+    ['Eggs', 'Flour', 'Salt', '...'], 
+    'Bertrand Denis'
+);
+
+const italianRecipe = new ItalianRecipe(
+    'Spaghetti Bolognese',
+    ['Pasta', 'Tomatoes', 'Garlic', 'Onions', '...'],
+);
+
+// displayRecipe(italianRecipe);
+// if you uncomment this line you'll get the following error: 
+// property 'chef' is missing
+displayRecipe(brittanyRecipe);
+// This is a french recipe conceived by the following chef: Betrand Denis
+
+
+
+
+type Dog = {
+    name: string;
+    race: string;
+}
+
+type Cat = {
+    race: string;
+    nightVision: number;
+}
+
+function isDog(arg: any): arg is Dog {
+    return arg.race !== undefined;
+}
+
+console.log(isDog({
+    race: 'Saint-Hubert',
+    nightVision: 12
+}));
