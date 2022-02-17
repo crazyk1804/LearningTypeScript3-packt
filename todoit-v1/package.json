@@ -1,0 +1,20 @@
+{
+  "name": "todoit-v1",
+  "version": "1.0.0",
+  "description": "non of your business",
+  "main": "index.js",
+  "scripts": {
+    "serve": "browser-sync start --server --watch",
+    "compile": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "4.17.11"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.27.7",
+    "typescript": "3.4.4"
+  }
+}

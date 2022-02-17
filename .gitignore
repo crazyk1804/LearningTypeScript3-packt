@@ -1,0 +1,10 @@
+# Project exclude paths
+/hello/calculator-safe.js
+/hello/hello-world.js
+/mediaman-v1-initial/node_modules/
+/mediaman-v1-initial/pre-known.js
+/todoit-v1/node_modules/
+/todoit-v1/oop.js
+/todoit-v1/todo-it.js
+/todoit-v2/node_modules/
+/todoit-v2/todo-it.js
