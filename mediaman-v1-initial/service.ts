@@ -3,14 +3,14 @@ import localForage from 'localforage';
 import { classToPlain, plainToClassFromExist, Expose, Type, instanceToPlain,  } from 'class-transformer';
 import 'reflect-metadata';
 
-interface MediaService<T extends Media> {
+export interface MediaService<T extends Media> {
     loadMediaCollection(identifier: string): Promise<MediaCollection<T>>;
     saveMediaCollection(collection: Readonly<MediaCollection<T>>) : Promise<void>;
     getMediaCollectionIdentifiersList(): Promise<string[]>;
     removeMediaCollection(identifier: string): Promise<void>;
 }
 
-class MediaServiceImpl<T extends Media> implements MediaService<T> {
+export class MediaServiceImpl<T extends Media> implements MediaService<T> {
     private readonly _store: LocalForage;
 
     constructor(private _type: Function) {
@@ -35,9 +35,11 @@ class MediaServiceImpl<T extends Media> implements MediaService<T> {
             this._store.getItem(identifier)
                 .then(value => {
                     console.log('Found the collection: ', value);
+                    debugger;
                     const retrievedCollection = plainToClassFromExist<MediaCollection<T>, any>(
                         new MediaCollection<T>(this._type), value
                     );
+                    resolve(retrievedCollection);
                 })
                 .catch(err => {
                     reject(err); // let the error through

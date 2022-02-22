@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import { classToPlain, plainToClassFromExist, Expose, Type } from 'class-transformer';
 
 export enum Genre {
@@ -5,7 +6,7 @@ export enum Genre {
     Fantastic = 'Fantastic',
     Thriller = 'Thriller',
     Romance = 'Romance',
-    Fiction = 'Fiction'
+    Fiction = 'Fiction',
 }
 
 export abstract class Media {
@@ -23,30 +24,31 @@ export abstract class Media {
             Math.random().toString(36).substr(2, 9);
     }
 
+    @Expose()
     get identifier(): string {
         return this._identifier;
     }
-
     set identifier(identifier: string) {
         this._identifier = identifier;
     }
 
+    @Expose()
     get name(): string {
         return this._name;
     }
-
     set name(name: string) {
         this._name = name;
     }
 
+    @Expose()
     get description(): string {
         return this._description;
     }
-
     set description(description: string) {
         this._description = description;
     }
 
+    @Expose()
     get pictureLocation(): string {
         return this._pictureLocation;
     }
@@ -55,6 +57,7 @@ export abstract class Media {
         this._pictureLocation = pictureLocation;
     }
 
+    @Expose()
     get genre(): Genre {
         return this._genre;
     }
@@ -65,11 +68,46 @@ export abstract class Media {
 }
 
 export class Book extends Media {
+    private _author: string;
+    private _numberOfPages: number;
+
+    constructor(
+        name: string,
+        description: string,
+        pictureLocation: string,
+        genre: Genre,
+        author: string,
+        numberOfPages: number,
+        identifier?: string
+    ) {
+        super(name, description, pictureLocation, genre, identifier);
+        this._author = author;
+        this._numberOfPages = numberOfPages;
+    }
+
+    @Expose()
+    get author(): string {
+        return this._author;
+    }
+    set author(author: string) {
+        this._author = author;
+    }
+
+    @Expose()
+    get numberOfPages(): number {
+        return this._numberOfPages;
+    }
+    set numberOfPages(numberOfPages: number) {
+        this._numberOfPages = numberOfPages;
+    }
+}
+
+export class Movie extends Media {
     private _duration: string;
     private _director: string;
 
     constructor(
-        name: string,
+        name: string, 
         description: string,
         pictureLocation: string,
         genre: Genre,
@@ -82,20 +120,20 @@ export class Book extends Media {
         this._director = director;
     }
 
-    get director(): string {
-        return this._director;
-    }
-
-    set director(director: string) {
-        this._director = director;
-    }
-
+    @Expose()
     get duration(): string {
         return this._duration;
     }
-
     set duration(duration: string) {
         this._duration = duration;
+    }
+
+    @Expose()
+    get director(): string {
+        return this._director;
+    }
+    set director(director: string) {
+        this._director = director;
     }
 }
 
@@ -134,7 +172,8 @@ export class MediaCollection<T extends Media> {
     }
 
     @Expose()
-    @Type(options => { 
+    @Type(options => {
+        debugger;
         console.log(options);
         if(options) {
             return (options.newObject as MediaCollection<T>)._type;
