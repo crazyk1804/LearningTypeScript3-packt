@@ -8,7 +8,7 @@ export interface PopulationService {
     getFemalePopulation(country: Country, dataRange: string): Promise<DataPoint[]>;
     getLifeExpectancy(country: Country, dataRange: string): Promise<DataPoint[]>;
     getAdultFemaleLiteracy(country: Country, dateRange: string): Promise<DataPoint[]>;
-    getAdultMaleLteracy(country: Country, dataRange: string): Promise<DataPoint[]>;
+    getAdultMaleLiteracy(country: Country, dataRange: string): Promise<DataPoint[]>;
     getMaleSurvivalToAge65(country: Country, dataRange: string): Promise<DataPoint[]>;
     getFemaleSurvivalToAge65(country: Country, dataRange: string): Promise<DataPoint[]>;
 }

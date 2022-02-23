@@ -44,7 +44,9 @@ const validCountry: Country = {
 
 const invalidCountry: unknown = {
     foo: 'foo',
-    name: 'bar',
+    id: 'j',
+    name: 'wjdwogml',
+    capitalCity: 'qhwl'
 };
 
 const validationResultForValidCountry = countryValidator.decode(validCountry);

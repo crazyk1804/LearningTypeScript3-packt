@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const controller_1 = require("./controller");
+const model_1 = require("./model");
+const service_1 = require("./service");
+const view_1 = require("./view");
+const view = new view_1.HTMLMediaManView();
+const bookService = new service_1.MediaServiceImpl(model_1.Book);
+const movieService = new service_1.MediaServiceImpl(model_1.Movie);
+const mediaManController = new controller_1.MediaManControllerImpl(view, bookService, movieService);
+const customWindow = window;
+customWindow.mediaManController = mediaManController;
+console.log('MediaMan ready!', customWindow.mediaManController);
+// console.log('starts');
