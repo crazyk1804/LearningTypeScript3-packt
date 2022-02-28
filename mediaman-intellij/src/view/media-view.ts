@@ -12,8 +12,8 @@ class MediaFormView<T extends Media> {
 	private _tboxCollectionName: HTMLInputElement;
 	private _btnCreate: HTMLButtonElement;
 	private _btnReload: HTMLButtonElement;
-	private _onClickBtnCreate: Function;
-	private _onClickBtnReload: Function;
+	private _onCreateHandlers: Function[] = [];
+	private _onReloadHandlers: Function[] = [];
 
 	constructor(
 		private readonly _type: Function,
@@ -24,36 +24,35 @@ class MediaFormView<T extends Media> {
 		this._tboxCollectionName = this._form.querySelector('[name=tboxCollectionName]') as HTMLInputElement;
 		this._btnCreate = this._form.querySelector('[name=btnCreate]') as HTMLButtonElement;
 		this._btnReload = this._form.querySelector('[name=btnReload]') as HTMLButtonElement;
+
+		this.bindEvents();
 	}
 
 	getCollectionName(): string {
 		return this._tboxCollectionName.value;
 	}
 
-	set onClickBtnCreate(handler: Function) {
-		this._onClickBtnCreate = handler;
+	set addOnCreateHandler(handler: Function) {
+		this._onCreateHandlers.push(handler);
 	}
 
-	set onClickBtnReload(handler: Function) {
-		this._onClickBtnReload = handler;
+	set addOnReloadHandler(handler: Function) {
+		this._onReloadHandlers.push(handler);
 	}
 
 	bindEvents(): void {
 		const me = this;
 
 		this._btnCreate.onclick = function (evt) {
-			if(!me._onClickBtnCreate) return;
-
 			const collectionName: string = me._tboxCollectionName.value;
 			const created: MediaCollection<T> = new MediaCollection<T>(
 				me._type, collectionName
 			);
-			me._onClickBtnCreate(created);
+			me._onCreateHandlers.forEach(handler => handler(created));
 		}
 
 		this._btnReload.onclick = evt => {
-			if (!me._onClickBtnReload) return;
-			me._onClickBtnReload();
+			me._onReloadHandlers.forEach(handler => handler());
 		}
 	}
 }
@@ -65,12 +64,18 @@ class GalleryView {
 	}
 }
 
-class BookCollectionView {
+class MediaCollectionView {
+	private _element: HTMLDivElement = document.createElement('div');
+
+	constructor() {
+
+
+abstract class MediaCollectionListView {
 	private _element = document.createElement('div');
 	private _container = document.createElement('div');
 	private _table = document.createElement('table');
 
-	constructor(private _identifier: string) {
+	protected constructor(private _identifier: string) {
 		this._element.className = 'containerGroup';
 		this._container.className = 'container';
 		this._table.className = 'collectionTable';
@@ -82,33 +87,62 @@ class BookCollectionView {
 				<td>Genre</td>
 				<td>Description</td>
 				<td>Author</td>
-				<td>Pages</td>
-				<td>Remove</td>
+				${ this.getCustomFields() }
 			</tr>
 			</thead>
-			<tbody id="${ _identifier }"></tbody>
+			<tbody id="${_identifier}"></tbody>
 		`.trim();
+
+		this._container.append(this._table);
+		this._element.append(this._container);
 	}
 
-	addBook(book: Book): void {
+	protected abstract getCustomFields(): string;
+	protected abstract getMediaSpecificValues(media: Media): string;
+
+
+	addMedia(media: Media): void {
 		const tbody = this._table.querySelector('tbody') as HTMLElement;
 		Checker.element(tbody, 'book table body');
 		tbody.innerHTML += `
-			<tr>
-				<td><img src="${ book.pictureLocation }"></td>
-				<td>${ book.name }</td>
-				<td>${ book.genre }</td>
-				<td>${ book.description }</td>
-				<td>${ book.author }</td>
-				<td>${ book.totalPage }</td>
+			<tr id="${ media.identifier }">
+				<td><img src="${media.pictureLocation}"></td>
+				<td>${media.name}</td>
+				<td>${media.genre}</td>
+				<td>${media.description}</td>
+				${ this.getMediaSpecificValues(media) }
 				<td><input type="button" value="삭제"></td>
 			</tr>
 		`.trim();
 	}
+
+	removeMedia(media: Media): void {
+		let mediaRow = this._table.querySelector(`#${media.identifier}`);
+		if(mediaRow) mediaRow.remove();
+	}
 }
 
-class MediaCollectionListView {
-	private _container: HTMLDivElement = document.createElement('div');
+class BookCollectionListView extends MediaCollectionListView {
+	protected getCustomFields(): string {
+		return '<td>Author</td><td>Pages</td>';
+	}
+
+	protected getMediaSpecificValues(media: Media): string {
+		const book = media as Book;
+		return `<td>${book.author}</td><td>${book.totalPage}</td>`;
+	}
+}
+
+class MovieCollectionListView extends MediaCollectionListView {
+	protected getCustomFields(): string {
+		return '<td>Director</td><td>Length</td>';
+	}
+
+	protected getMediaSpecificValues(media: Media): string {
+		const movie = media as Movie;
+		return `<td>${movie.director}</td><td>${movie.runningTime}</td>`;
+	}
+}
 
 export class MediaView {
 	private _bookForm: MediaFormView<Book> = new MediaFormView<Book>(Book, 'newBookCollection');
@@ -116,7 +150,4 @@ export class MediaView {
 
 	constructor() {
 	}
-
-
-
 }

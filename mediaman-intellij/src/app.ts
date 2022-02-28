@@ -20,5 +20,4 @@ class GClass<T extends Media> {
 
 let gc = new GClass<Book>();
 console.log(GClass === GClass);
-
-console.log(GClass.)
+console.log('asdf');

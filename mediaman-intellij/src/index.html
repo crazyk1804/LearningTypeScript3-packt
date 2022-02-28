@@ -14,8 +14,8 @@
             <div class="container">
                 <h3>New collection</h3>
                 <form id="newBookCollection" action="#">
-                    <input id="newBookCollectionName" name="tboxCollectionName" type="text" title="Name" placeholder="Name" class="fld-collection-name" required>
-                    <input type="button" value="Create" name="btnCreate" onclick="mediaManController.createBookCollection();"/>
+                    <input id="tboxCollectionName" name="tboxCollectionName" type="text" title="Name" placeholder="Name" class="fld-collection-name" required>
+                    <input type="button" id="btnCreate" value="Create" name="btnCreate" onclick="mediaManController.createBookCollection();"/>
                 </form>
             </div>
             <div class="container">
@@ -87,5 +87,6 @@
     </div>
 
 	<script src="./app.ts"></script>
+
 </body>
 </html>
