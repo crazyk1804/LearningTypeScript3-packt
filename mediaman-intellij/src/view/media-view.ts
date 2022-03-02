@@ -58,14 +58,72 @@ class MediaFormView<T extends Media> {
 	}
 }
 
-class GalleryView {
+class CollectionsView {
 	constructor(
 		private _container: HTMLDivElement
 	) {
 	}
 }
 
-class BookCollectionView {
+class CollectionView {
+	private _element = document.createElement('div');
+
+	constructor(
+		private readonly _collection: MediaCollection<Media>
+	) {
+		this._element.className = 'collection';
+		this._element.id = `collection-${this._collection.identifier}`;
+		this.initElement();
+	}
+
+	private initElement(): void {
+		this._element.innerHTML = `
+			<h3 class="collectionName">${ this._collection.name }</h3>
+                <div class="containerGroup">
+                    <div class="container">
+                        <h3>New book</h3>
+
+                        <form id="newBook-${ this._collection.identifier }" action="#">
+						<ul>
+							<li>
+								<input id="newBookName-${ this._collection.identifier }" 
+									type="text" title="Name" placeholder="Name" required>
+								<input id="newBookAuthor-${ this._collection.identifier }"
+									type="text" placeholder="Author" required>
+							</li>
+							<li>
+								<select id="newBookGenre-${ this._collection.identifier }" required>
+									${ this._genreOptions }
+								</select>
+								<input id="newBookPages-${ this._collection.identifier }"
+									type="number" placeholder="Pages" required>
+							</li>
+							<li>
+								<input id="newBookPicture-${ this._collection.identifier }"
+									type="url" title="Picture" placeholder="Picture URL" value="https://picsum.photos/536/354">
+							</li>
+							<li>
+								<textarea id="newBookDescription-${ this._collection.identifier }" 
+									placeholder="Description"></textarea>
+							</li>
+						</ul>
+						<input type="button" value="Create" 
+							onclick="mediaManController.createBook('${ this._collection.identifier }');">
+                        </form>
+                    </div>
+                    <div class="collectionToolsContainer">
+                        <h3>Tools</h3>
+                        <form action="#">
+                            <input type="button" value="Remove collection" 
+                                onclick="mediaManController.removeBookCollection('${ this._collection.identifier }');">
+                        </form>
+                    </div>
+                </div>
+		`;
+	}
+}
+
+class BookListView {
 	private _element = document.createElement('div');
 	private _container = document.createElement('div');
 	private _table = document.createElement('table');
@@ -106,9 +164,6 @@ class BookCollectionView {
 		`.trim();
 	}
 }
-
-class MediaCollectionListView {
-	private _container: HTMLDivElement = document.createElement('div');
 
 export class MediaView {
 	private _bookForm: MediaFormView<Book> = new MediaFormView<Book>(Book, 'newBookCollection');
