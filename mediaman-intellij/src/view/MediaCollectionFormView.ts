@@ -1,52 +1,54 @@
+import {Checker, Viewty} from "../common/utils";
+import {HTMLView} from "./HTMLView";
 import {Media, MediaCollection} from "../domain/domain";
-import {Checker} from "../common/utils";
 
-class MediaCollectionFormView<T extends Media> {
-	private _form: HTMLFormElement;
-	private _tboxCollectionName: HTMLInputElement;
-	private _btnCreate: HTMLButtonElement;
-	private _btnReload: HTMLButtonElement;
+export class MediaCollectionFormView<T extends Media> extends HTMLView {
 	private _onCreateHandlers: Function[] = [];
-	private _onReloadHandlers: Function[] = [];
 
-	constructor(
-		private readonly _type: Function,
-		private readonly _formId: string,
-	) {
-		Checker.param(_formId, 'form id');
-		this._form = document.getElementById(_formId) as HTMLFormElement;
-		this._tboxCollectionName = this._form.querySelector('[name=tboxCollectionName]') as HTMLInputElement;
-		this._btnCreate = this._form.querySelector('[name=btnCreate]') as HTMLButtonElement;
-		this._btnReload = this._form.querySelector('[name=btnReload]') as HTMLButtonElement;
+	constructor(private _mediaType: Function) {
+		super();
 
 		this.bindEvents();
 	}
 
-	getCollectionName(): string {
-		return this._tboxCollectionName.value;
+	protected getElement(): HTMLElement {
+		return Viewty.el<HTMLDivElement>(`
+			<div>
+				<div class="containerGroup">
+					<div class="container">
+					<h3>New collection</h3>
+					<form action="#" name="collectionForm">
+						<input type="text" name="collectionName" title="Name" placeholder="Name" 
+							class="fld-collection-name" required/>
+						<input type="button" value="Create" name="btnCreate" />
+					</form>
+				</div>
+				<div class="container">
+					<h3>Tools</h3>
+					<form action="#">
+						<input type="button" name="btnReload" value="Reload collections" />
+					</form>
+				</div>
+			</div>
+		`);
 	}
 
-	set addOnCreateHandler(handler: Function) {
+	getMediaCollection(): MediaCollection<T> {
+		const collectionName = Checker.ev(this.findByName<HTMLInputElement>('collectionName'), 'Collection Name');
+		return new MediaCollection<T>(this._mediaType, collectionName);
+	}
+
+	set onCreate(handler: Function) {
 		this._onCreateHandlers.push(handler);
 	}
 
-	set addOnReloadHandler(handler: Function) {
-		this._onReloadHandlers.push(handler);
-	}
+	private bindEvents() {
+		let btnCreate = this._element.querySelector('[name=btnCreate]') as HTMLButtonElement;
+		btnCreate.onclick = evt => {
+			if(!this._onCreateHandlers.length) return;
 
-	bindEvents(): void {
-		const me = this;
-
-		this._btnCreate.onclick = function (evt) {
-			const collectionName: string = me._tboxCollectionName.value;
-			const created: MediaCollection<T> = new MediaCollection<T>(
-				me._type, collectionName
-			);
-			me._onCreateHandlers.forEach(handler => handler(created));
-		}
-
-		this._btnReload.onclick = evt => {
-			me._onReloadHandlers.forEach(handler => handler());
+			const mediaCollection = this.getMediaCollection();
+			this._onCreateHandlers.forEach(handler => handler(mediaCollection));
 		}
 	}
 }

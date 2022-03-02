@@ -15,7 +15,7 @@
       "build": "cross-env NODE_ENV=production parcel build index.html --public-url .",
       "watch": "parcel watch index.html",
       "serve": "npm start",
-      "start": "parcel serve --no-autoinstall --no-hmr --open --port 3000 index.html"
+      "start": "parcel serve --no-autoinstall --no-hmr --open --port 3001 index.html"
     }
   },
   "author": "",

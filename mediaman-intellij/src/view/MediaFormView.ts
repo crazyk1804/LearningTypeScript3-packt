@@ -1,59 +1,51 @@
-import {Genre, Media, MediaCollection} from "../domain/domain";
+import {HTMLView} from "./HTMLView";
+import {Genre, Media} from "../domain/domain";
+import {Viewty} from "../common/utils";
 
-const _genreOptions = Object.keys(Genre).reduce((html, key) => {
-	html += `<option value="${ key }">${Genre[key as keyof typeof Genre]}</option>`;
+const genreOptions = Object.keys(Genre).reduce((html, key) => {
+	const value = Genre[key as keyof typeof Genre];
+	html += `<option value="${key}">${value}</option>`;
 	return html;
 }, '');
 
-export abstract class MediaFormView<T extends Media> {
-	protected readonly _element: HTMLDivElement;
-	protected _onCreateHandlers: Function[] = [];
-
-	protected constructor(private readonly _mediaCollection: MediaCollection<T>) {
-		this._element = document.createElement('div');
-		this._element.className = 'container';
-		this._element.innerHTML = `
-			<h3>New book</h3>
-			<form id="mediaForm-${_mediaCollection.identifier}" action="#">
-				<ul>
-					<li>
-						<input id="tboxName-${_mediaCollection.identifier}" name="name"
-							type="text" title="Name" placeholder="Name" required>
-					</li>
-					<li>
-						<select id="cboxGenre-${_mediaCollection.identifier}" name="genre" required>
-							${_genreOptions}
-						</select>
-					</li>
-					<li>
-						<input id="urlPictureLocation-${_mediaCollection.identifier}" name="pictureLocation"
-							type="url" title="Picture" placeholder="Picture URL" value="https://picsum.photos/536/354">
-					</li>
-					<li>
-						<textarea id="taDescription-${_mediaCollection.identifier}" name="description"
-							placeholder="Description"></textarea>
-					</li>
-				</ul>
-				<input id="btnCreateMedia-${ _mediaCollection.identifier }" type="button" value="Create" 
-					onclick="mediaManController.createBook('${_mediaCollection.identifier}');">
-			</form>
-		`;
-		this.bindEvents();
+export class MediaFormView<T extends Media> extends HTMLView {
+	constructor(private _mediaType: Function) {
+		super(_mediaType);
 	}
 
-	abstract getMedia(): T;
 
-	addOnCreateHandler(handler: Function): void {
-		this._onCreateHandlers.push(handler);
-	}
+	protected getElement(_mediaType: Function): HTMLElement {
+		return Viewty.el(`
+			<div class="containerGroup">
+				<div class="container">
+					<h3>New ${ _mediaType.name }</h3>
 
-	protected bindEvents(): void {
-		const btn = this._element.querySelector(
-			`#btnCreateMedia-${this._mediaCollection.identifier}`
-		) as HTMLButtonElement;
-		btn.onclick = evt => {
-			let created = this.getMedia();
-			this._onCreateHandlers.forEach(handler => handler(created));
-		}
+					<form action="#">
+						<ul>
+							<li>
+								<input name="name" type="text" title="Name" placeholder="Name" required>
+							</li>
+							<li>
+								<select name="genre" required>${ genreOptions }</select>
+							</li>
+							<li>
+								<input name="picture" type="url" title="Picture" 
+									placeholder="Picture URL" value="https://picsum.photos/536/354">
+							</li>
+							<li>
+								<textarea name="description" placeholder="Description"></textarea>
+							</li>
+						</ul>
+						<input type="button" value="Create">
+					</form>
+				</div>
+				<div class="collectionToolsContainer">
+					<h3>Tools</h3>
+					<form action="#">
+						<input type="button" value="Remove collection">
+					</form>
+				</div>
+			</div>
+		`)
 	}
 }

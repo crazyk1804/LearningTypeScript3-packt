@@ -17,30 +17,39 @@ export class Checker {
         throw new Error(`Element ${name} is not in document. What the fuck did you do?`);
     }
 
-    static elementValue(element: HTMLInputElement | string, name: string): string {
-        if('string' === typeof element) {
+    static ev(element: HTMLInputElement | string, name: string): string {
+        if ('string' === typeof element)
             element = document.getElementById(element) as HTMLInputElement;
+
+        if(!element) throw new Error(`cannot find element ${ name }`);
+        if(!element.checkValidity()) {
+            element.reportValidity();
+            throw new Error(`invalid value on ${ name }`);
         }
-        if (!element) throw new Error(`There is no element of ${name}!!`);
         return element.value;
     }
-
 }
 
 export class Viewty {
     private static domParser = new DOMParser();
 
-    static appendNext(targetNode: HTMLElement | string, node: HTMLElement): void {
-        if('string' == typeof targetNode) {
-            targetNode = document.getElementById(targetNode) as HTMLElement;
+    static isParseError(parsedDocument: Document) {
+        // parser and parsererrorNS could be cached on startup for efficiency
+        var parser = new DOMParser(),
+            errorneousParse = parser.parseFromString('<', 'application/xml'),
+            parsererrorNS = errorneousParse.getElementsByTagName("parsererror")[0].namespaceURI;
+
+        if (parsererrorNS === 'http://www.w3.org/1999/xhtml') {
+            // In PhantomJS the parseerror element doesn't seem to have a special namespace, so we are just guessing here :(
+            return parsedDocument.getElementsByTagName("parsererror").length > 0;
         }
 
-        if (!targetNode || !targetNode.parentNode) return;
-        targetNode.parentNode.insertBefore(node, targetNode.nextSibling);
-    }
+        return parsedDocument.getElementsByTagNameNS(parsererrorNS, 'parsererror').length > 0;
+    };
 
-    static dom<T extends HTMLElement>(html: string): T {
-        let element = this.domParser.parseFromString(html, 'text/xml');
-        return element.firstChild as T;
+    static el<T extends HTMLElement>(html: string): T {
+        const template = document.createElement('template');
+        template.innerHTML = html.trim();
+        return template.content.firstElementChild as T;
     }
 }
