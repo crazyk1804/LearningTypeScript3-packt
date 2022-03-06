@@ -9,10 +9,11 @@ const genreOptions = Object.keys(Genre).reduce((html, key) => {
 }, '');
 
 export class MediaFormView<T extends Media> extends HTMLView {
+	private _onCreateMedia: Function[] = [];
+
 	constructor(private _mediaType: Function) {
 		super(_mediaType);
 	}
-
 
 	protected getElement(_mediaType: Function): HTMLElement {
 		return Viewty.el(`

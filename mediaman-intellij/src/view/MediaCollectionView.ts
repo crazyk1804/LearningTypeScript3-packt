@@ -42,10 +42,7 @@ export class MediaCollectionView<T extends Media> extends HTMLView {
 
 	protected modifyElement(element: HTMLElement, viewParam: MediaCollectionViewParam<T>) {
 		const _mediaType = viewParam._mediaType;
-		const _mediaCollection = viewParam._mediaCollection;
-
 		const mediaForm = element.querySelector('form:first-of-type') as HTMLElement;
-		const identifier = _mediaCollection.identifier;
 
 		if(Book === _mediaType) {
 			let li = mediaForm.querySelector('li:first-of-type') as HTMLLIElement;
