@@ -37,7 +37,8 @@ export class Checker {
         return Number(stringValue);
     }
 
-    static ens(enumType: Function, key: string, name?: string): string {
+    static eve<T>(element: HTMLInputElement, name: string, enumType: any): T {
+        const key = this.evs(element, name);
         return enumType[key as keyof typeof enumType];
     }
 }

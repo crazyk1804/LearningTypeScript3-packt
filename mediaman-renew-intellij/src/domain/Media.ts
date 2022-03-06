@@ -17,6 +17,7 @@ export class Media {
 		protected _name: string,
 		protected _description: string,
 		protected _genre: Genre,
+		protected _pictureLocation: string,
 		identifier?: string
 	) {
 		this._identifier = (identifier) ? identifier : Generator.newId();
@@ -61,11 +62,12 @@ export class Book extends Media {
 		name: string,
 		description: string,
 		genre: Genre,
+		pictureLocation: string,
 		protected _author: string,
 		protected _pages: number,
 		identifier?: string
 	) {
-		super(name, description, genre, identifier);
+		super(name, description, genre, pictureLocation, identifier);
 	}
 
 
@@ -91,11 +93,12 @@ export class Movie extends Media {
 		name: string,
 		description: string,
 		genre: Genre,
+		pictureLocation: string,
 		private _director: string,
 		private _length: number,
 		identifier?: string
 	) {
-		super(name, description, genre, identifier);
+		super(name, description, genre, pictureLocation, identifier);
 	}
 
 	get director(): string {

@@ -105,9 +105,15 @@ export class MediaCollectionView<T extends Media> extends HTMLView {
 		switch(this._mediaType) {
 			case Book:
 				return new Book(
-					Checker.evs(this.selectByName('name'), 'Book Name')),
-					Checker.evs(this.selectByName('description'), 'Book Description'))
-				)
+					Checker.evs(this.selectByName<HTMLInputElement>('name'), 'Book Name'),
+					Checker.evs(this.selectByName<HTMLInputElement>('description'), 'Book Description'),
+					Checker.eve(this.selectByName<HTMLInputElement>('genre'), 'Book Genre', Genre),
+					Checker.evs(this.selectByName<HTMLInputElement>('picture'), 'Book Picture'),
+					Checker.evs(this.selectByName<HTMLInputElement>('author'), 'Book Author'),
+					Checker.evn(this.selectByName<HTMLInputElement>('pages'), 'Book Pages')
+				) as unknown as T;
+			default:
+				throw new Error(`Invalid media type: ${ this._mediaType }`);
 		}
 	}
 }
