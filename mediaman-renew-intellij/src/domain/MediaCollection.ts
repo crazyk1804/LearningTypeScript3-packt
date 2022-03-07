@@ -1,5 +1,6 @@
 import { Generator } from "../cmm/utils";
 import {Media} from "./Media";
+import {Expose} from "class-transformer";
 
 export class MediaCollection<T extends Media> {
 	private _identifier: string;
@@ -22,6 +23,7 @@ export class MediaCollection<T extends Media> {
 		this._type = value;
 	}
 
+	@Expose()
 	get name(): string {
 		return this._name;
 	}
@@ -30,10 +32,12 @@ export class MediaCollection<T extends Media> {
 		this._name = value;
 	}
 
+	@Expose()
 	get collection(): T[] {
 		return this._collection.concat() as T[];
 	}
 
+	@Expose()
 	get identifier(): string {
 		return this._identifier;
 	}

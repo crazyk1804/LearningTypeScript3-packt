@@ -23,6 +23,7 @@ export class MediaCollectionFormView<T extends Media> extends HTMLView {
 				</form>
 			</div>
 		`;
+		this.bindEvents();
 	}
 
 	protected createElement(): HTMLElement {
@@ -37,6 +38,7 @@ export class MediaCollectionFormView<T extends Media> extends HTMLView {
 				this._type,
 				Checker.evs(this.selectByName<HTMLInputElement>('name'), 'collection name')
 			);
+			this._onCreateMediaCollectionHandler(evt, mediaCollection);
 		}
 	}
 

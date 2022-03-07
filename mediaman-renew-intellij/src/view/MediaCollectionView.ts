@@ -14,14 +14,16 @@ export interface ViewParam<T extends Media> {
 }
 
 export class MediaCollectionView<T extends Media> extends HTMLView {
-	private _mediaType: Function;
+	private readonly _mediaType: Function;
 	private _collection: MediaCollection<T>;
+	private _onCreateMediaHandler: Function | undefined;
 
 	constructor(mediaType: Function, collection: MediaCollection<T>) {
 		super({mediaType: mediaType, collection: collection});
 		this._mediaType = mediaType;
 		this._collection = collection;
 		this.init();
+		this.bindEvents();
 	}
 
 	protected createElement(param: ViewParam<T>) {
@@ -101,7 +103,7 @@ export class MediaCollectionView<T extends Media> extends HTMLView {
 		}
 	}
 
-	private createMedia(): T {
+	public createMedia(): T {
 		switch(this._mediaType) {
 			case Book:
 				return new Book(
@@ -115,5 +117,43 @@ export class MediaCollectionView<T extends Media> extends HTMLView {
 			default:
 				throw new Error(`Invalid media type: ${ this._mediaType }`);
 		}
+	}
+
+	public addMedia(media: T): void {
+		const row = Viewty.el(`
+			<tr>
+				<td><img src="${ media.pictureLocation }"/></td>
+				<td>${ media.name }</td>
+				<td>${ media.genre }</td>
+				<td>${ media.description }</td>
+				<td><input type="button" value="-"/></td>
+			</tr>
+		`.trim());
+
+		if(media instanceof Book) {
+			const book = media as Book;
+			row.insertBefore(Viewty.el(`<td>${ book.author }</td>`), row.querySelector('td:last-child'));
+			row.insertBefore(Viewty.el(`<td>${ book.pages }</td>`), row.querySelector('td:last-child'));
+		}
+
+		const tbody = this.select('.collectionTable > tbody');
+		tbody.append(row);
+	}
+
+	private bindEvents(): void {
+		const btnCreate = this.select('input[type=button][value=Create]');
+		btnCreate.onclick = evt => {
+			if(!this._onCreateMediaHandler) return;
+			const media = this.createMedia();
+			this._onCreateMediaHandler(evt, media, this._collection);
+		}
+	}
+
+	set onCreateMedia(handler: Function) {
+		this._onCreateMediaHandler = handler;
+	}
+
+	get identifier(): string {
+		return this._collection.identifier;
 	}
 }

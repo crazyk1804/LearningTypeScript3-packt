@@ -1,4 +1,5 @@
 import {Generator} from "../cmm/utils";
+import {Expose} from "class-transformer";
 
 export enum Genre {
 	Horror = 'Horror',
@@ -23,7 +24,7 @@ export class Media {
 		this._identifier = (identifier) ? identifier : Generator.newId();
 	}
 
-
+	@Expose()
 	get name(): string {
 		return this._name;
 	}
@@ -32,6 +33,7 @@ export class Media {
 		this._name = value;
 	}
 
+	@Expose()
 	get description(): string {
 		return this._description;
 	}
@@ -40,6 +42,7 @@ export class Media {
 		this._description = value;
 	}
 
+	@Expose()
 	get genre(): Genre {
 		return this._genre;
 	}
@@ -48,12 +51,22 @@ export class Media {
 		this._genre = value;
 	}
 
+	@Expose()
 	get identifier(): string {
 		return this._identifier;
 	}
 
 	set identifier(value: string) {
 		this._identifier = value;
+	}
+
+	@Expose()
+	get pictureLocation(): string {
+		return this._pictureLocation;
+	}
+
+	set pictureLocation(value: string) {
+		this._pictureLocation = value;
 	}
 }
 
@@ -70,7 +83,7 @@ export class Book extends Media {
 		super(name, description, genre, pictureLocation, identifier);
 	}
 
-
+	@Expose()
 	get author(): string {
 		return this._author;
 	}
@@ -79,6 +92,7 @@ export class Book extends Media {
 		this._author = value;
 	}
 
+	@Expose()
 	get pages(): number {
 		return this._pages;
 	}
@@ -101,6 +115,7 @@ export class Movie extends Media {
 		super(name, description, genre, pictureLocation, identifier);
 	}
 
+	@Expose()
 	get director(): string {
 		return this._director;
 	}
@@ -109,6 +124,7 @@ export class Movie extends Media {
 		this._director = value;
 	}
 
+	@Expose()
 	get length(): number {
 		return this._length;
 	}
